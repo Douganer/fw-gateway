@@ -1,0 +1,18 @@
+server:
+  port: 8089
+spring:
+  application:
+    name: fw-gateway
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.0.230:8848
+        namespace: df959b8c-de58-4d02-b9fb-d65ca3be05f3
+      config:
+        server-addr: 192.168.0.230:8848
+        namespace: df959b8c-de58-4d02-b9fb-d65ca3be05f3
+        ext-config:
+          - dataId: gateway.yaml
+            refresh: true

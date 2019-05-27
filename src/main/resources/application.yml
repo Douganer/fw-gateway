@@ -1,0 +1,6 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.feewee.cn:80
+        watch-delay: 1000

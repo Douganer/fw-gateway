@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <property name="charSet" value="UTF-8"/>
+    <springProperty scope="context" name="logLevel" source="logging.level" defaultValue="info"/>
+    <springProperty scope="context" name="maxHistory" source="logging.file.maxHistory" defaultValue="7"/>
+    <springProperty scope="context" name="maxSize" source="logging.file.maxSize" defaultValue="512MB"/>
+
+    <!-- log output to console -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%-5p] %red(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger) - %cyan(%msg%n)</pattern>
+            <charset>${charSet}</charset>
+        </encoder>
+    </appender>
+    <springProfile name="local">
+        <root level="${logLevel}">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        <logger name="com.alibaba.nacos">
+            <appender-ref ref="CONSOLE"/>
+            <level value="INFO"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="dev,test,prd">
+        <!-- full log output to file -->
+        <appender name="DEFAULT_FILE"
+                  class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${dynamic.log.path}/fw_gateway_all.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${dynamic.log.path}/fw_gateway_all.log.%d{yyyy-MM-dd}</fileNamePattern>
+                <maxHistory>${maxHistory}</maxHistory>
+                <totalSizeCap>${maxSize}</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>[%-5p] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%c] - %m%n</pattern>
+                <charset>${charSet}</charset>
+            </encoder>
+        </appender>
+        <!-- error log output to file -->
+        <appender name="LOG_ERROR_FILE"
+                  class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>ERROR</level>
+            </filter>
+            <file>${dynamic.log.path}/fw_gateway_error.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${dynamic.log.path}/fw_gateway_error.log.%d{yyyy-MM-dd}</fileNamePattern>
+                <maxHistory>${maxHistory}</maxHistory>
+                <totalSizeCap>${maxSize}</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>[%-5p] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%c] - %m%n</pattern>
+                <charset>${charSet}</charset>
+            </encoder>
+        </appender>
+        <root level="${logLevel}">
+            <appender-ref ref="DEFAULT_FILE"/>
+            <appender-ref ref="LOG_ERROR_FILE"/>
+        </root>
+    </springProfile>
+</configuration>
